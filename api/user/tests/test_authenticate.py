@@ -1,9 +1,9 @@
+from django.http import HttpRequest
 from django.test import TestCase
 from freezegun import freeze_time
-from user.authentication import CustomUserAuthentication
-from django.http import HttpRequest
-from user.models import User
 from rest_framework.exceptions import AuthenticationFailed
+from user.authentication import CustomUserAuthentication
+from user.models import User
 
 request = HttpRequest()
 

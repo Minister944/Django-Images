@@ -1,8 +1,6 @@
 from django.test import TestCase
-
-from user.models import User, Tier, Size
-
 from rest_framework.exceptions import PermissionDenied
+from user.models import Size, Tier, User
 
 
 class UserTestCase(TestCase):

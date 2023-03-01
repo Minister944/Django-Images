@@ -1,14 +1,11 @@
-from django.test import TestCase, Client
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-
-from user.models import User, Tier, Size
-from images.models import Image
-from images.serializer import ImageSerializer
-from rest_framework.test import force_authenticate
 import os
+
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
+from images.models import Image
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
+from user.models import Size, Tier, User
 
 
 class ImageUploadViewIntegrationTest(APITestCase):

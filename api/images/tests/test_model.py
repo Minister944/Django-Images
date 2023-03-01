@@ -1,12 +1,12 @@
+import os
 from datetime import timedelta
-from django.test import TestCase
 
-from images.models import Image
-from user.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
 from django.utils import timezone
 from images.exceptions import ExpiredLinkException
-import os
-from django.core.files.uploadedfile import SimpleUploadedFile
+from images.models import Image
+from user.models import User
 
 
 class ImageTestCase(TestCase):

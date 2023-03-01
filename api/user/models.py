@@ -1,13 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (
-    CASCADE,
-    BooleanField,
-    CharField,
-    ForeignKey,
-    IntegerField,
-    ManyToManyField,
-    Model,
-)
+from django.db.models import (CASCADE, BooleanField, CharField, ForeignKey,
+                              IntegerField, ManyToManyField, Model)
 from rest_framework.exceptions import PermissionDenied
 
 

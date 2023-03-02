@@ -4,7 +4,6 @@ from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils import timezone
-
 from images.exceptions import ExpiredLinkException
 from images.models import Image
 from user.models import User

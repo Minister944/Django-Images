@@ -2,10 +2,9 @@ import os
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from images.models import Image
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
-
-from images.models import Image
 from user.models import Size, Tier, User
 
 

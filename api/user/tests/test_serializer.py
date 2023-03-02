@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from user.models import Tier, User
 from user.serializer import LoginUserSerializer, UserSerializer
 

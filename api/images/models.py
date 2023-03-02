@@ -1,11 +1,9 @@
 import os
 from io import BytesIO
 
-from django.db.models import (CASCADE, DateTimeField, ForeignKey, ImageField,
-                              Model)
+from django.db.models import CASCADE, DateTimeField, ForeignKey, ImageField, Model
 from django.utils import timezone
 from PIL import Image as PilImage
-
 from user.models import User
 
 from .exceptions import ExpiredLinkException

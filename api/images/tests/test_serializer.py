@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from images.models import Image
 from images.serializer import ImageSerializer
 from user.models import User

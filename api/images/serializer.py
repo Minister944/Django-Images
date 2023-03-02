@@ -1,10 +1,11 @@
 from datetime import timedelta
 
-from core.settings import MAX_SIZE_IMG
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from images.models import Image
 from rest_framework import serializers
+
+from core.settings import MAX_SIZE_IMG
+from images.models import Image
 
 
 class ImageSerializer(serializers.ModelSerializer):

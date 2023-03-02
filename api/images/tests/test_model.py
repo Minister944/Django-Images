@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils import timezone
+
 from images.exceptions import ExpiredLinkException
 from images.models import Image
 from user.models import User
@@ -11,19 +12,20 @@ from user.models import User
 
 class ImageTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="admin", password="qwerty")
         self.image = Image.objects.create(owner=self.user)
 
-        path = os.path.join("images", "tests", "test_images", "test_image.png")
-        if not os.path.exists(path):
-            raise FileNotFoundError(f"{path} does not exist")
+        self.image.image = self.create_image_file()
+        self.image.save()
+
+    def create_image_file(self):
+        path = "images/tests/test_images/test_image.png"
         with open(path, "rb") as f:
             image_data = f.read()
-            image_file = SimpleUploadedFile(
-                name="test_image.png", content=image_data, content_type="image/jpeg"
-            )
-        self.image.image = image_file
-        self.image.save()
+        image_file = SimpleUploadedFile(
+            "test_image.png", image_data, content_type="image/png"
+        )
+        return image_file
 
     def tearDown(self):
         os.remove(self.image.image.path)

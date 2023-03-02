@@ -2,9 +2,10 @@ import os
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from images.models import Image
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
+
+from images.models import Image
 from user.models import Size, Tier, User
 
 
@@ -16,55 +17,49 @@ class ImageUploadViewIntegrationTest(APITestCase):
         self.size400 = Size.objects.create(size=400)
 
         self.tier_basic = Tier.objects.create(name="Basic")
-
         self.tier_basic.thumbnail_sizes.add(self.size200)
         self.tier_basic.thumbnail_sizes.add(self.size400)
 
         self.tier_permium = Tier.objects.create(name="Premium", has_original=True)
-
         self.tier_permium.thumbnail_sizes.add(self.size200)
         self.tier_permium.thumbnail_sizes.add(self.size400)
 
-        self.user = User.objects.create(
-            username="testuser",
-            password="testpass",
-            image_tier=self.tier_basic,
+        self.user_basic = self.create_user("admin", self.tier_basic)
+        self.user_premium = self.create_user("adminPro", self.tier_permium)
+
+        self.image_file = self.create_image_file()
+
+    def create_user(self, username, tier):
+        user = User.objects.create(
+            username=username,
+            password="qwerty",
+            image_tier=tier,
         )
+        return user
 
-        self.user_premium = User.objects.create(
-            username="testuserpremium",
-            password="testpass",
-            image_tier=self.tier_permium,
-        )
-
-    def test_upload_image(self):
-        self.client.force_authenticate(user=self.user)
-
-        image_path = "images/tests/test_images/test_image.png"
-        with open(image_path, "rb") as f:
+    def create_image_file(self):
+        path = "images/tests/test_images/test_image.png"
+        with open(path, "rb") as f:
             image_data = f.read()
         image_file = SimpleUploadedFile(
             "test_image.png", image_data, content_type="image/png"
         )
+        return image_file
 
-        response = self.client.post(reverse("upload-image"), {"image": image_file})
+    def test_upload_image(self):
+        self.client.force_authenticate(user=self.user_basic)
+
+        response = self.client.post(reverse("upload-image"), {"image": self.image_file})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         image = Image.objects.get(id=response.data["id"])
-        self.assertTrue(image.owner == self.user)
+        self.assertTrue(image.owner == self.user_basic)
         self.assertTrue(image.expiration_time is None)
 
     def test_thumbnail_generation(self):
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user_basic)
 
-        image_path = "images/tests/test_images/test_image.png"
-        with open(image_path, "rb") as f:
-            image_data = f.read()
-        image_file = SimpleUploadedFile(
-            "test_image.png", image_data, content_type="image/png"
-        )
-
-        response = self.client.post(reverse("upload-image"), {"image": image_file})
-
+        response = self.client.post(reverse("upload-image"), {"image": self.image_file})
         thumbnail_links = response.data["thumbnails"]
         self.assertTrue(len(thumbnail_links) == 2)
         self.assertIn("400px", thumbnail_links)
@@ -74,17 +69,9 @@ class ImageUploadViewIntegrationTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_permission(self):
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.user_basic)
 
-        image_path = "images/tests/test_images/test_image.png"
-        with open(image_path, "rb") as f:
-            image_data = f.read()
-        image_file = SimpleUploadedFile(
-            "test_image.png", image_data, content_type="image/png"
-        )
-
-        response = self.client.post(reverse("upload-image"), {"image": image_file})
-
+        response = self.client.post(reverse("upload-image"), {"image": self.image_file})
         thumbnail_links = response.data["thumbnails"]
 
         response = self.client.get("http://testserver/api/image/999/200")
